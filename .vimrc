@@ -3,7 +3,7 @@ set nocompatible
 " colors for :match highlighting
 hi r ctermfg=White guifg=White ctermbg=Red guibg=Red
 hi g ctermfg=Black guifg=Black ctermbg=Green guibg=Green
-hi b ctermfg=Black guifg=Black ctermbg=Blue guibg=Blue
+hi b ctermfg=Black guifg=Black ctermbg=Cyan guibg=Cyan
 
 " indentation and formatting
 filetype plugin on
@@ -19,7 +19,6 @@ set nowrap
 " remappings 
 noremap <c-n> gt
 noremap <c-p> gT
-command Lex Vex!
 noremap zl 15zl
 noremap zh 15zh
 noremap <F3> :tabnew ~/.vimrc<cr>
