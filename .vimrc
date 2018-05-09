@@ -35,6 +35,7 @@ let g:netrw_banner = 0
 set wildmode=longest,list,full
 set wildmenu
 set hlsearch
+set incsearch
 set laststatus=2
 set splitbelow
 set splitright
