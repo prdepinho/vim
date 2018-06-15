@@ -14,22 +14,20 @@ set ts=2
 set softtabstop=2
 set expandtab
 set nowrap
-autocmd Filetype set sw=2 ts=2 softtabstop=2 expandtab 
-autocmd Filetype text set wrap linebreak wrapmargin=0 colorcolumn=80
+autocmd Filetype text set wrap linebreak wrapmargin=0 colorcolumn=80 autoindent
 autocmd Filetype netrw set number relativenumber
-autocmd Filetype vim set sw=2 ts=2 softtabstop=2 expandtab 
-autocmd Filetype help set sw=2 ts=2 softtabstop=2 expandtab colorcolumn=120 
-autocmd Filetype eruby,html,xml set sw=2 ts=2 softtabstop=2 expandtab 
+autocmd Filetype vim set sw=2 ts=2 softtabstop=2 expandtab colorcolumn=80
+autocmd Filetype eruby,html,xml set sw=2 ts=2 softtabstop=2 expandtab colorcolumn=0
 autocmd Filetype ruby set sw=2 ts=2 softtabstop=2 expandtab colorcolumn=120 
 autocmd Filetype h,hpp,c,cpp,java,python set softtabstop=4 sw=4 ts=4 colorcolumn=120 noexpandtab 
+
+autocmd BufEnter * if &filetype == "" | setlocal filetype=text | endif
 
 " remappings 
 noremap <c-n> gt
 noremap <c-p> gT
-noremap zl 15zl
-noremap zh 15zh
-noremap <F3> :tabnew ~/.vimrc<cr>
-noremap <F4> :source ~/.vimrc<cr>
+noremap <F3> :tabnew ~.vim/vimrc<cr>
+noremap <F4> :source ~.vim/vimrc<cr>
 noremap <F5> :copen<cr>
 noremap <F6> :cclose<cr>
 noremap <F7> :cn<cr>
@@ -56,4 +54,20 @@ set history=1000
 set backup
 set backupdir=~/.vim/backups
 set directory=~/.vim/swaps
+set lazyredraw
+
+" functions and commands
+function! GitDiff()
+  r!git diff
+  set filetype=git
+  set colorcolumn=0
+endfunction
+
+function! TabGitDiff()
+  tabnew
+  call GitDiff()
+  normal gg
+endfunction
+
+com! Giff call TabGitDiff()
 
