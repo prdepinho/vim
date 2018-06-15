@@ -26,8 +26,8 @@ autocmd BufEnter * if &filetype == "" | setlocal filetype=text | endif
 " remappings 
 noremap <c-n> gt
 noremap <c-p> gT
-noremap <F3> :tabnew ~.vim/vimrc<cr>
-noremap <F4> :source ~.vim/vimrc<cr>
+noremap <F3> :tabnew ~/.vim/vimrc<cr>
+noremap <F4> :source ~/.vim/vimrc<cr>
 noremap <F5> :copen<cr>
 noremap <F6> :cclose<cr>
 noremap <F7> :cn<cr>
