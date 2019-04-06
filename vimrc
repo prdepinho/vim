@@ -1,13 +1,35 @@
 set nocompatible
 syntax on
-colors zellner
+colors zellner  " a theme that keeps the terminal bg color
+set encoding=utf-8
 
 " windows vim
 if has("gui_running")
   if has("gui_win32")
+    " This changes the default shell for Git Bash, instead of Windows CMD. 
+    " If the path has a space, like in Program\ Files, your :! commands will
+    " not work, so move or copy your Git instalation somewhere else without a
+    " space.
+    set shell=C:\\MinGw\\Git\\bin\\bash.exe
+    set shellpipe=|
+    set shellredir=>
+    set shellcmdflag=
+    set shellcmdflag=-c
+    " a softer koehler
+    colors evening
     set guifont=Consolas:h10
-    set columns=85
-    set lines=60
+    set guioptions=
+    " This maximazes the window by opening the window menu with Alt-Space and typing x.
+    autocmd VimEnter * simalt ~x
+    simalt ~x
+    " set columns=85 lines=60
+
+    " Remap meta keys to work in the terminal, instead of printing weird
+    " characters.
+    tnoremap <M-b> <ESC>b
+    tnoremap <M-f> <ESC>f
+    tnoremap <M-d> <ESC>d
+    tnoremap <M-BS> <ESC><BS>
   endif
 endif
 
@@ -22,16 +44,16 @@ hi y ctermfg=Black guifg=Black ctermbg=Yellow guibg=Yellow
 filetype on
 filetype plugin on
 filetype indent on
-autocmd Filetype qf set colorcolumn=-1
-autocmd Filetype text set sw=2 ts=2 softtabstop=2 expandtab wrap linebreak wrapmargin=0 colorcolumn=80 autoindent
-autocmd Filetype notype set nonumber norelativenumber colorcolumn=0 nowrap
-autocmd Filetype netrw set number relativenumber nowrap
-autocmd Filetype vim set sw=2 ts=2 softtabstop=2 expandtab colorcolumn=120 nowrap
-autocmd Filetype eruby,html,xml set sw=2 ts=2 softtabstop=2 expandtab colorcolumn=0 nowrap
-autocmd Filetype ruby set sw=2 ts=2 softtabstop=2 expandtab colorcolumn=120 nowrap
-autocmd Filetype h,hpp,c,cpp,java set softtabstop=4 sw=4 ts=4 colorcolumn=120 noexpandtab nowrap
-autocmd Filetype python set softtabstop=4 shiftwidth=4 tabstop=4 colorcolumn=120 expandtab nowrap
-autocmd Filetype markdown set softtabstop=4 shiftwidth=4 tabstop=4 colorcolumn=120 expandtab nowrap
+autocmd Filetype qf set cc=-1
+autocmd Filetype text set sw=2 ts=2 sts=2 et wrap linebreak wrapmargin=0 cc=80 autoindent nu rnu
+autocmd Filetype notype set nonu nornu cc=0 nowrap
+autocmd Filetype netrw set nu rnu nowrap
+autocmd Filetype vim set sw=2 ts=2 sts=2 et cc=120 nowrap nu rnu
+autocmd Filetype eruby,html,xml set sw=2 ts=2 sts=2 et cc=0 nowrap nu rnu
+autocmd Filetype ruby set sw=2 ts=2 sts=2 et cc=120 nowrap nu rnu
+autocmd Filetype h,hpp,c,cpp,java set sts=4 sw=4 ts=4 cc=120 noet nowrap nu rnu
+autocmd Filetype python set sts=4 shiftwidth=4 ts=4 cc=120 et nowrap nu rnu
+autocmd Filetype markdown set sts=4 shiftwidth=4 ts=4 cc=120 et nowrap nu rnu
 
 autocmd BufEnter * if &filetype == "" | setlocal filetype=notype | endif
 
@@ -39,12 +61,21 @@ autocmd BufEnter * if &filetype == "" | setlocal filetype=notype | endif
 map <c-w>q <nop>
 noremap <c-n> gt
 noremap <c-p> gT
+noremap <C-TAB> gt
+noremap <C-S-TAB> gT
+noremap <C-TAB> gt
+noremap <C-S-TAB> gT
 noremap <F1> :copen<cr>
 noremap <F2> :cclose<cr>
-noremap <F3> :cp<cr>
-noremap <F4> :cn<cr>
-noremap <F5> :source ~/.vim/vimrc<cr>
-noremap <F6> :tabnew ~/.vim/vimrc<cr>
+noremap <F3> :cn<cr>
+noremap <F4> :cp<cr>
+if has("win32")
+  noremap <F5> :source ~/_vimrc<cr>
+  noremap <F6> :tabnew ~/_vimrc<cr>
+else
+  noremap <F5> :source ~/.vim/vimrc<cr>
+  noremap <F6> :tabnew ~/.vim/vimrc<cr>
+endif
 vnoremap // y/\V<C-r>"<CR>
 vnoremap < <gv
 vnoremap > >gv
@@ -66,11 +97,23 @@ set backspace=indent,eol,start
 " vim metadata
 set history=1000
 set backup
-set backupdir=~/.vim/backups
-set directory=~/.vim/swaps
+if has("win32")
+  set backupdir=~/_vim/backups
+  set directory=~/_vim/swaps
+else
+  set backupdir=~/.vim/backups
+  set directory=~/.vim/swaps
+endif
 set lazyredraw
 
 " functions and commands
+"
+function! Path(path)
+  " Substitutes backslashes on a windows path to forward slashes.
+  let new_path = substitute(a:path, "\\", "/", "")
+  return new_path
+endfunction
+
 function! TabGitDiff()
   " Shows git diff of the unstaged files in a new tab.
   tabnew
@@ -87,12 +130,12 @@ function! TabVimdiff(...)
   " The current branch is the default. It is useful for checking the
   " differences of a staged file.
   
-  let branch = system("git remote")[:-2]."/".system("git symbolic-ref HEAD --short")[:-2]
+  let branch = Path(system("git remote")[:-2]."/".system("git symbolic-ref HEAD --short")[:-2])
   if a:0 >= 1
     let branch = a:1
   endif
   echo branch
-  let filename = @%
+  let filename = Path(@%)
   tabnew
   execute "r!git show ".branch.":".filename
   normal gg
