@@ -5,31 +5,44 @@ set encoding=utf-8
 
 " windows vim
 if has("gui_running")
+
+  " a softer koehler
+  colors evening
+  set guifont=Consolas:h10
+  set guioptions=
+
+  " Remap meta keys to work in the terminal, instead of printing weird
+  " characters.
+  tnoremap <M-b> <ESC>b
+  tnoremap <M-f> <ESC>f
+  tnoremap <M-d> <ESC>d
+  tnoremap <M-BS> <ESC><BS>
+
+  " Cursor and column line.
+  hi CursorLine guibg=gray30
+  hi CursorColumn guibg=gray30
+  set cursorline
+  " set cursorcolumn
+  " set columns=85 lines=60
+
   if has("gui_win32")
     " This changes the default shell for Git Bash, instead of Windows CMD. 
     " If the path has a space, like in Program\ Files, your :! commands will
     " not work, so move or copy your Git instalation somewhere else without a
     " space.
-    set shell=C:\\MinGw\\Git\\bin\\bash.exe
+    set shell=C:/MinGw/Git/bin/bash.exe
     set shellpipe=|
     set shellredir=>
-    set shellcmdflag=
     set shellcmdflag=-c
-    " a softer koehler
-    colors evening
-    set guifont=Consolas:h10
-    set guioptions=
+
+    " I haven't figured out how grep or make can use the temp folder on
+    " Windows. An alternative to using :grep -e "expression" $(find -name "*.py")
+    " is to use :vimgrep "expression" **/*.py instead.
+    set grepprg=grep
+
     " This maximazes the window by opening the window menu with Alt-Space and typing x.
     autocmd VimEnter * simalt ~x
     simalt ~x
-    " set columns=85 lines=60
-
-    " Remap meta keys to work in the terminal, instead of printing weird
-    " characters.
-    tnoremap <M-b> <ESC>b
-    tnoremap <M-f> <ESC>f
-    tnoremap <M-d> <ESC>d
-    tnoremap <M-BS> <ESC><BS>
   endif
 endif
 
@@ -55,7 +68,20 @@ autocmd Filetype h,hpp,c,cpp,java set sts=4 sw=4 ts=4 cc=120 noet nowrap nu rnu
 autocmd Filetype python set sts=4 shiftwidth=4 ts=4 cc=120 et nowrap nu rnu
 autocmd Filetype markdown set sts=4 shiftwidth=4 ts=4 cc=120 et nowrap nu rnu
 
+autocmd Filetype netrw autocmd BufEnter hi CursorLine gui=underline
+
+autocmd BufEnter *.vue setfiletype html
 autocmd BufEnter * if &filetype == "" | setlocal filetype=notype | endif
+
+" Auto close tags, (, [ and { when follod with <RETURN> or <SPACE>
+autocmd Filetype eruby,html,xml inoremap ><RETURN> ><ESC>T<yiwf>a</<ESC>pA><ESC>F<i<RETURN><ESC>O
+autocmd Filetype eruby,html,xml inoremap ><SPACE> ><ESC>T<yiwf>a</<ESC>pA><ESC>F<i
+inoremap (<RETURN> ()<ESC>i<RETURN><ESC>O
+inoremap [<RETURN> []<ESC>i<RETURN><ESC>O
+inoremap {<RETURN> {}<ESC>i<RETURN><ESC>O
+inoremap (<SPACE> ()<ESC>i
+inoremap [<SPACE> []<ESC>i
+inoremap {<SPACE> {}<ESC>i
 
 " remappings 
 map <c-w>q <nop>
@@ -69,7 +95,7 @@ noremap <F1> :copen<cr>
 noremap <F2> :cclose<cr>
 noremap <F3> :cn<cr>
 noremap <F4> :cp<cr>
-if has("win32")
+if $OS == "Windows_NT"
   noremap <F5> :source ~/_vimrc<cr>
   noremap <F6> :tabnew ~/_vimrc<cr>
 else
@@ -81,7 +107,8 @@ vnoremap < <gv
 vnoremap > >gv
 
 " browsing and navigation
-let g:netrw_liststyle = 3
+let g:netrw_bufsettings = 'noma nomod nu rnu nobl nowrap ro'
+let g:netrw_liststyle = 1
 let g:netrw_banner = 0
 set wildmode=longest,list,full
 set wildmenu
@@ -97,16 +124,17 @@ set backspace=indent,eol,start
 " vim metadata
 set history=1000
 set backup
-if has("win32")
+if $OS == "Windows_NT"
   set backupdir=~/_vim/backups
   set directory=~/_vim/swaps
 else
   set backupdir=~/.vim/backups
   set directory=~/.vim/swaps
 endif
-set lazyredraw
+" set lazyredraw  " This makes my tag closing remaps indent too much.
 
-" functions and commands
+"
+" Functions and commands
 "
 function! Path(path)
   " Substitutes backslashes on a windows path to forward slashes.
@@ -197,10 +225,12 @@ function! CreateWorkspace(...)
   execute "set number relativenumber"
 endfunction
 
+" Git commands
 com! GiffAll call TabGitDiff()
 com! -nargs=* Giff call TabVimdiff(<f-args>)
 com! OverwriteRemote call OverwriteRemote()
 com! OverwriteLocal call OverwriteLocal()
 com! -nargs=* SolveConflict call SolveConflict(<f-args>)
 
+" Misc commands
 com! -nargs=* CreateWorkspace call CreateWorkspace(<f-args>)
