@@ -6,10 +6,17 @@ set encoding=utf-8
 " windows vim
 if has("gui_running")
 
-  " a softer koehler
-  colors evening
+  colors torte
+  hi Normal guibg=gray10
   set guifont=Consolas:h10
   set guioptions=
+
+  " Cursor and column line.
+  hi CursorLine guibg=gray15
+  hi CursorColumn guibg=gray15
+  set cursorline
+  set cursorcolumn
+  " set columns=85 lines=60
 
   " Remap meta keys to work in the terminal, instead of printing weird
   " characters.
@@ -17,13 +24,6 @@ if has("gui_running")
   tnoremap <M-f> <ESC>f
   tnoremap <M-d> <ESC>d
   tnoremap <M-BS> <ESC><BS>
-
-  " Cursor and column line.
-  hi CursorLine guibg=gray30
-  hi CursorColumn guibg=gray30
-  set cursorline
-  " set cursorcolumn
-  " set columns=85 lines=60
 
   if has("gui_win32")
     " This changes the default shell for Git Bash, instead of Windows CMD. 
@@ -43,6 +43,9 @@ if has("gui_running")
     " This maximazes the window by opening the window menu with Alt-Space and typing x.
     autocmd VimEnter * simalt ~x
     simalt ~x
+
+    " Copy to clipboard by default.
+    set clipboard=unnamed
   endif
 endif
 
@@ -89,12 +92,13 @@ noremap <c-n> gt
 noremap <c-p> gT
 noremap <C-TAB> gt
 noremap <C-S-TAB> gT
-noremap <C-TAB> gt
-noremap <C-S-TAB> gT
 noremap <F1> :copen<cr>
 noremap <F2> :cclose<cr>
 noremap <F3> :cn<cr>
 noremap <F4> :cp<cr>
+
+" In GitBash has("Win32") returns false;
+" this returns true on Windows even when in GitBash.
 if $OS == "Windows_NT"
   noremap <F5> :source ~/_vimrc<cr>
   noremap <F6> :tabnew ~/_vimrc<cr>
@@ -102,6 +106,7 @@ else
   noremap <F5> :source ~/.vim/vimrc<cr>
   noremap <F6> :tabnew ~/.vim/vimrc<cr>
 endif
+
 vnoremap // y/\V<C-r>"<CR>
 vnoremap < <gv
 vnoremap > >gv
@@ -138,7 +143,7 @@ endif
 "
 function! Path(path)
   " Substitutes backslashes on a windows path to forward slashes.
-  let new_path = substitute(a:path, "\\", "/", "")
+  let new_path = substitute(a:path, "\\", "/", "g")
   return new_path
 endfunction
 
@@ -225,6 +230,44 @@ function! CreateWorkspace(...)
   execute "set number relativenumber"
 endfunction
 
+function! TransformPath(path)
+  " Transforms a path into a valid filename.
+  let new_path = substitute(a:path, "\\", "__", "g")
+  let new_path = substitute(new_path, "/", "__", "g")
+  let new_path = substitute(new_path, " ", "_", "g")
+  let new_path = substitute(new_path, ":", "", "g")
+  return new_path
+endfunction
+
+function! OpenSession(...)
+  " Open a session with the specified session name. If no name is specified,
+  " open the session of the directory previously created by calling
+  " CloseSession without argumnt at the same directory.
+  if a:0 >= 1
+    let session_name = a:1
+  else
+    let pwd = getcwd()
+    let session_name = TransformPath(pwd)
+  endif
+  execute "source ~/_vim/sessions/".session_name.".vim"
+endfunction
+
+function! CloseSession(...)
+  " Save the session with the specified name and close Vim. If no name is
+  " specified, a session will be created with a name based on the working
+  " directory path. This session may be open by calling OpenSession without
+  " argument at the same directory.
+  if a:0 >= 1
+    let session_name = a:1
+  else
+    let pwd = getcwd()
+    let session_name = TransformPath(pwd)
+  endif
+  execute "mks! ~/_vim/sessions/".session_name.".vim"
+  execute "wa"
+  execute "qa!"
+endfunction
+
 " Git commands
 com! GiffAll call TabGitDiff()
 com! -nargs=* Giff call TabVimdiff(<f-args>)
@@ -234,3 +277,5 @@ com! -nargs=* SolveConflict call SolveConflict(<f-args>)
 
 " Misc commands
 com! -nargs=* CreateWorkspace call CreateWorkspace(<f-args>)
+com! -nargs=* OpenSession call OpenSession(<f-args>)
+com! -nargs=* CloseSession call CloseSession(<f-args>)
