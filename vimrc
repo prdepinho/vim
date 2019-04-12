@@ -7,8 +7,12 @@ set encoding=utf-8
 if has("gui_running")
 
   colors torte
+  " Tweaks to the color scheme.
   hi Normal guibg=gray10
-  set guifont=Consolas:h10
+  hi TabLine guifg=Black guibg=Grey
+
+  " set guifont=Consolas:h10
+  set guifont=Lucida\ Console:h9
   set guioptions=
 
   " Cursor and column line.
@@ -24,6 +28,7 @@ if has("gui_running")
   tnoremap <M-f> <ESC>f
   tnoremap <M-d> <ESC>d
   tnoremap <M-BS> <ESC><BS>
+  tnoremap <S-Insert> <C-w>""
 
   if has("gui_win32")
     " This changes the default shell for Git Bash, instead of Windows CMD. 
@@ -35,13 +40,17 @@ if has("gui_running")
     set shellredir=>
     set shellcmdflag=-c
 
-    " I haven't figured out how grep or make can use the temp folder on
-    " Windows. An alternative to using :grep -e "expression" $(find -name "*.py")
+    " I haven't figured out how :grep or :make can use the temp folder on
+    " Windows to create an error list. 
+    " An alternative to using :grep -e "expression" $(find -name "*.py")
     " is to use :vimgrep "expression" **/*.py instead.
     set grepprg=grep
 
     " This maximazes the window by opening the window menu with Alt-Space and typing x.
-    autocmd VimEnter * simalt ~x
+    augroup maximizegroup
+      autocmd!
+      autocmd VimEnter * simalt ~x
+    augroup end
     simalt ~x
 
     " Copy to clipboard by default.
@@ -60,25 +69,34 @@ hi y ctermfg=Black guifg=Black ctermbg=Yellow guibg=Yellow
 filetype on
 filetype plugin on
 filetype indent on
-autocmd Filetype qf set cc=-1
-autocmd Filetype text set sw=2 ts=2 sts=2 et wrap linebreak wrapmargin=0 cc=80 autoindent nu rnu
-autocmd Filetype notype set nonu nornu cc=0 nowrap
-autocmd Filetype netrw set nu rnu nowrap
-autocmd Filetype vim set sw=2 ts=2 sts=2 et cc=120 nowrap nu rnu
-autocmd Filetype eruby,html,xml set sw=2 ts=2 sts=2 et cc=0 nowrap nu rnu
-autocmd Filetype ruby set sw=2 ts=2 sts=2 et cc=120 nowrap nu rnu
-autocmd Filetype h,hpp,c,cpp,java set sts=4 sw=4 ts=4 cc=120 noet nowrap nu rnu
-autocmd Filetype python set sts=4 shiftwidth=4 ts=4 cc=120 et nowrap nu rnu
-autocmd Filetype markdown set sts=4 shiftwidth=4 ts=4 cc=120 et nowrap nu rnu
 
-autocmd Filetype netrw autocmd BufEnter hi CursorLine gui=underline
+augroup indentationgroup
+  autocmd!
+  autocmd Filetype qf set cc=-1
+  autocmd Filetype text set sw=2 ts=2 sts=2 et wrap linebreak wrapmargin=0 cc=80 autoindent nu rnu
+  autocmd Filetype notype set nonu nornu cc=0 nowrap
+  autocmd Filetype netrw set nu rnu nowrap
+  autocmd Filetype eruby,html,xml set sw=2 ts=2 sts=2 et cc=0 nowrap nu rnu
+  autocmd Filetype sql,vim,ruby  set sw=2 ts=2 sts=2 et cc=120 nowrap nu rnu
+  autocmd Filetype h,hpp,c,cpp,java set sts=4 sw=4 ts=4 cc=120 noet nowrap nu rnu
+  autocmd Filetype python set sts=4 shiftwidth=4 ts=4 cc=120 et nowrap nu rnu
+  autocmd Filetype markdown set sts=4 shiftwidth=4 ts=4 cc=120 et nowrap nu rnu
+augroup end 
 
-autocmd BufEnter *.vue setfiletype html
-autocmd BufEnter * if &filetype == "" | setlocal filetype=notype | endif
+augroup miscgroup
+  autocmd!
+  autocmd Filetype netrw autocmd BufEnter hi CursorLine gui=underline
+  autocmd BufEnter *.vue setfiletype html
+  autocmd BufEnter * if &filetype == "" | setlocal filetype=notype | endif
+augroup end
 
 " Auto close tags, (, [ and { when follod with <RETURN> or <SPACE>
-autocmd Filetype eruby,html,xml inoremap ><RETURN> ><ESC>T<yiwf>a</<ESC>pA><ESC>F<i<RETURN><ESC>O
-autocmd Filetype eruby,html,xml inoremap ><SPACE> ><ESC>T<yiwf>a</<ESC>pA><ESC>F<i
+augroup tagsgroup
+  autocmd!
+  autocmd Filetype eruby,html,xml inoremap <buffer> ><RETURN> ><ESC>T<yiwf>a</<ESC>pA><ESC>F<i<RETURN><ESC>O
+  autocmd Filetype eruby,html,xml inoremap <buffer> ><SPACE> ><ESC>T<yiwf>a</<ESC>pA><ESC>F<i
+augroup end
+
 inoremap (<RETURN> ()<ESC>i<RETURN><ESC>O
 inoremap [<RETURN> []<ESC>i<RETURN><ESC>O
 inoremap {<RETURN> {}<ESC>i<RETURN><ESC>O
@@ -92,6 +110,8 @@ noremap <c-n> gt
 noremap <c-p> gT
 noremap <C-TAB> gt
 noremap <C-S-TAB> gT
+tnoremap <C-TAB> <C-w>:normal gt<CR>
+tnoremap <C-S-TAB> <C-w>:normal gT<CR>
 noremap <F1> :copen<cr>
 noremap <F2> :cclose<cr>
 noremap <F3> :cn<cr>
@@ -120,6 +140,8 @@ set wildmenu
 set hlsearch
 set incsearch
 set laststatus=2
+set statusline=%<%f%h%m%r%=%b\ 0x%B\ \ %l,%c%V\ %P
+set showcmd
 set splitbelow
 set splitright
 set number relativenumber
@@ -157,12 +179,10 @@ function! TabGitDiff()
 endfunction
 
 function! TabVimdiff(...)
-
   " Open a tab with a vimdiff screen of the current file and its repository
   " version. It receives the branch as argument in the form repository/branch.
   " The current branch is the default. It is useful for checking the
   " differences of a staged file.
-  
   let branch = Path(system("git remote")[:-2]."/".system("git symbolic-ref HEAD --short")[:-2])
   if a:0 >= 1
     let branch = a:1
@@ -177,29 +197,23 @@ function! TabVimdiff(...)
 endfunction
 
 function! OverwriteRemote()
-
   " Remove the remote lines of a merging Git file. Only the local
   " modifications remain.
-
   execute "g/^<<<<<<</d"
   execute "g/^=======$/.,/^>>>>>>>/d"
 endfunction
 
 function! OverwriteLocal()
-
   " Remove the local lines of a merging Git file. The remote lines
   " modifications remain.
-
   execute "g/^<<<<<<</.,/^=======$/d"
   execute "g/^>>>>>>>/d"
 endfunction
 
 function! SolveConflict(...)
-
   " Opens a new tab with the Git differences of a file in conflict. It
   " received the conflicting branch as argument. The default branch is
   " origin/master.
-
   let branch = "origin/master"
   if a:0 >= 1
     let branch = a:1
@@ -231,7 +245,7 @@ function! CreateWorkspace(...)
 endfunction
 
 function! TransformPath(path)
-  " Transforms a path into a valid filename.
+  " Transform a path into a valid filename.
   let new_path = substitute(a:path, "\\", "__", "g")
   let new_path = substitute(new_path, "/", "__", "g")
   let new_path = substitute(new_path, " ", "_", "g")
