@@ -13,7 +13,7 @@ if has("gui_running")
 
   " set guifont=Consolas:h10
   set guifont=Lucida\ Console:h9
-  set guioptions=
+  set guioptions=e
 
   " Cursor and column line.
   hi CursorLine guibg=gray15
@@ -28,7 +28,7 @@ if has("gui_running")
   tnoremap <M-f> <ESC>f
   tnoremap <M-d> <ESC>d
   tnoremap <M-BS> <ESC><BS>
-  tnoremap <S-Insert> <C-w>""
+  tnoremap <S-Insert> <C-w>"+
 
   if has("gui_win32")
     " This changes the default shell for Git Bash, instead of Windows CMD. 
@@ -55,6 +55,15 @@ if has("gui_running")
 
     " Copy to clipboard by default.
     set clipboard=unnamed
+
+  endif
+endif
+
+" Requires ALE plugin and Clang lint. MingW G++ lint has trouble with
+" include files.
+if $OS == "Windows_NT"
+  if exists("g:loaded_ale")
+    let g:ale_linters = { 'cpp' : ['clang'] }
   endif
 endif
 
@@ -77,8 +86,8 @@ augroup indentationgroup
   autocmd Filetype notype set nonu nornu cc=0 nowrap
   autocmd Filetype netrw set nu rnu nowrap
   autocmd Filetype eruby,html,xml set sw=2 ts=2 sts=2 et cc=0 nowrap nu rnu
-  autocmd Filetype sql,vim,ruby  set sw=2 ts=2 sts=2 et cc=120 nowrap nu rnu
-  autocmd Filetype h,hpp,c,cpp,java set sts=4 sw=4 ts=4 cc=120 noet nowrap nu rnu
+  autocmd Filetype sql,vim,ruby,json  set sw=2 ts=2 sts=2 et cc=120 nowrap nu rnu
+  autocmd Filetype h,hpp,c,cpp,java,cs set sts=4 sw=4 ts=4 cc=120 noet nowrap nu rnu
   autocmd Filetype python set sts=4 shiftwidth=4 ts=4 cc=120 et nowrap nu rnu
   autocmd Filetype markdown set sts=4 shiftwidth=4 ts=4 cc=120 et nowrap nu rnu
 augroup end 
@@ -144,7 +153,7 @@ set statusline=%<%f%h%m%r%=%b\ 0x%B\ \ %l,%c%V\ %P
 set showcmd
 set splitbelow
 set splitright
-set number relativenumber
+" set number relativenumber
 set mouse=a
 set backspace=indent,eol,start
 
@@ -266,6 +275,21 @@ function! OpenSession(...)
   execute "source ~/_vim/sessions/".session_name.".vim"
 endfunction
 
+function! SaveSession(...)
+  " Save the session with the specified name. If no name is specified, a
+  " session will be created with a name based on the working directory path.
+  " This session may be open by calling OpenSession without argument at the
+  " same directory.
+  if a:0 >= 1
+    let session_name = a:1
+  else
+    let pwd = getcwd()
+    let session_name = TransformPath(pwd)
+  endif
+  execute "mks! ~/_vim/sessions/".session_name.".vim"
+  execute "wa"
+endfunction
+
 function! CloseSession(...)
   " Save the session with the specified name and close Vim. If no name is
   " specified, a session will be created with a name based on the working
@@ -292,4 +316,5 @@ com! -nargs=* SolveConflict call SolveConflict(<f-args>)
 " Misc commands
 com! -nargs=* CreateWorkspace call CreateWorkspace(<f-args>)
 com! -nargs=* OpenSession call OpenSession(<f-args>)
+com! -nargs=* SaveSession call SaveSession(<f-args>)
 com! -nargs=* CloseSession call CloseSession(<f-args>)
