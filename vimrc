@@ -106,6 +106,16 @@ augroup tagsgroup
   autocmd Filetype eruby,html,xml inoremap <buffer> ><SPACE> ><ESC>T<yiwf>a</<ESC>pA><ESC>F<i
 augroup end
 
+augroup doendgroup
+  autocmd!
+  autocmd Filetype lua inoremap do<RETURN> doend<ESC>Fei<RETURN><ESC>O
+  autocmd Filetype lua inoremap then<RETURN> thenend<ESC>Fei<RETURN><ESC>O
+  autocmd Filetype lua inoremap function<SPACE> functionend<ESC>Fei<RETURN><ESC>kA<SPACE>
+
+  autocmd Filetype h,hpp,c,cpp inoremap class<SPACE> class{};<ESC>F}i<RETURN><ESC>kf{i<SPACE>
+  autocmd Filetype h,hpp,c,cpp inoremap struct<SPACE> struct{};<ESC>F}i<RETURN><ESC>kf{i<SPACE>
+augroup end
+
 inoremap (<RETURN> ()<ESC>i<RETURN><ESC>O
 inoremap [<RETURN> []<ESC>i<RETURN><ESC>O
 inoremap {<RETURN> {}<ESC>i<RETURN><ESC>O
@@ -267,41 +277,47 @@ function! OpenSession(...)
   " open the session of the directory previously created by calling
   " CloseSession without argumnt at the same directory.
   if a:0 >= 1
-    let session_name = a:1
+    let g:session_name = a:1
   else
     let pwd = getcwd()
-    let session_name = TransformPath(pwd)
+    let g:session_name = TransformPath(pwd)
   endif
-  execute "source ~/_vim/sessions/".session_name.".vim"
+  execute "source ~/_vim/sessions/".g:session_name.".vim"
 endfunction
 
 function! SaveSession(...)
-  " Save the session with the specified name. If no name is specified, a
-  " session will be created with a name based on the working directory path.
-  " This session may be open by calling OpenSession without argument at the
-  " same directory.
+  " Save the session with the specified name. If no name is specified, the
+  " current session is saved. If the current session is not set, then a
+  " session is created with a name based on the working directory path. This
+  " session may be open by calling OpenSession without argument at the same
+  " directory.
   if a:0 >= 1
-    let session_name = a:1
+    let g:session_name = a:1
   else
-    let pwd = getcwd()
-    let session_name = TransformPath(pwd)
+    if exists('g:session_name') == 0
+      let pwd = getcwd()
+      let g:session_name = TransformPath(pwd)
+    endif
   endif
-  execute "mks! ~/_vim/sessions/".session_name.".vim"
+  execute "mks! ~/_vim/sessions/".g:session_name.".vim"
   execute "wa"
 endfunction
 
 function! CloseSession(...)
   " Save the session with the specified name and close Vim. If no name is
-  " specified, a session will be created with a name based on the working
-  " directory path. This session may be open by calling OpenSession without
-  " argument at the same directory.
+  " specified, the current session is saved. If there is not a current
+  " session, a session will be created with a name based on the working
+  " directory path. In the last case, the session may be open by calling
+  " OpenSession without argument at the same directory.
   if a:0 >= 1
-    let session_name = a:1
+    let g:session_name = a:1
   else
-    let pwd = getcwd()
-    let session_name = TransformPath(pwd)
+    if exists('g:session_name') == 0
+      let pwd = getcwd()
+      let g:session_name = TransformPath(pwd)
+    endif
   endif
-  execute "mks! ~/_vim/sessions/".session_name.".vim"
+  execute "mks! ~/_vim/sessions/".g:session_name.".vim"
   execute "wa"
   execute "qa!"
 endfunction
