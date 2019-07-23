@@ -3,24 +3,30 @@ syntax on
 colors zellner  " a theme that keeps the terminal bg color
 set encoding=utf-8
 
+function! SetColors()
+  if has("gui_running")
+    colors torte
+    " Tweaks to the color scheme.
+    hi Normal guibg=gray10
+    hi TabLine guifg=Black guibg=Grey
+
+    " Cursor and column line.
+    hi CursorLine guibg=gray15
+    hi CursorColumn guibg=gray15
+  endif
+endfunction
+
 " windows vim
 if has("gui_running")
 
-  colors torte
-  " Tweaks to the color scheme.
-  hi Normal guibg=gray10
-  hi TabLine guifg=Black guibg=Grey
+  call SetColors()
+    " set guifont=Consolas:h10
+    set guifont=Lucida\ Console:h9
+    set guioptions=e
 
-  " set guifont=Consolas:h10
-  set guifont=Lucida\ Console:h9
-  set guioptions=e
-
-  " Cursor and column line.
-  hi CursorLine guibg=gray15
-  hi CursorColumn guibg=gray15
-  set cursorline
-  set cursorcolumn
-  " set columns=85 lines=60
+    set cursorline
+    set cursorcolumn
+    " set columns=85 lines=60
 
   " Remap meta keys to work in the terminal, instead of printing weird
   " characters.
@@ -99,7 +105,7 @@ augroup miscgroup
   autocmd BufEnter * if &filetype == "" | setlocal filetype=notype | endif
 augroup end
 
-" Auto close tags, (, [ and { when follod with <RETURN> or <SPACE>
+" Auto close tags, (, [, {, do, function, class, struct... when follod with <RETURN> or <SPACE>
 augroup tagsgroup
   autocmd!
   autocmd Filetype eruby,html,xml inoremap <buffer> ><RETURN> ><ESC>T<yiwf>a</<ESC>pA><ESC>F<i<RETURN><ESC>O
@@ -283,6 +289,8 @@ function! OpenSession(...)
     let g:session_name = TransformPath(pwd)
   endif
   execute "source ~/_vim/sessions/".g:session_name.".vim"
+  call SetColors()
+  simalt ~x
 endfunction
 
 function! SaveSession(...)
