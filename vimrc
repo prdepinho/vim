@@ -21,7 +21,12 @@ if has("gui_running")
 
   call SetColors()
     " set guifont=Consolas:h10
-    set guifont=Lucida\ Console:h9
+    if has("gui_win32")
+      set guifont=Lucida\ Console:h9
+    else
+      set guifont=Ubuntu\ Mono\ 10
+    endif
+
     set guioptions=e
 
     set cursorline
@@ -145,9 +150,11 @@ noremap <F4> :cp<cr>
 " In GitBash has("Win32") returns false;
 " this returns true on Windows even when in GitBash.
 if $OS == "Windows_NT"
+  let g:vimdir="~/_vim"
   noremap <F5> :source ~/_vimrc<cr>
   noremap <F6> :tabnew ~/_vimrc<cr>
 else
+  let g:vimdir="~/.vim"
   noremap <F5> :source ~/.vim/vimrc<cr>
   noremap <F6> :tabnew ~/.vim/vimrc<cr>
 endif
@@ -288,7 +295,7 @@ function! OpenSession(...)
     let pwd = getcwd()
     let g:session_name = TransformPath(pwd)
   endif
-  execute "source ~/_vim/sessions/".g:session_name.".vim"
+  execute "source ".g:vimdir."/sessions/".g:session_name.".vim"
   call SetColors()
   simalt ~x
 endfunction
@@ -307,7 +314,7 @@ function! SaveSession(...)
       let g:session_name = TransformPath(pwd)
     endif
   endif
-  execute "mks! ~/_vim/sessions/".g:session_name.".vim"
+  execute "mks! ".g:vimdir."/sessions/".g:session_name.".vim"
   execute "wa"
 endfunction
 
@@ -325,7 +332,7 @@ function! CloseSession(...)
       let g:session_name = TransformPath(pwd)
     endif
   endif
-  execute "mks! ~/_vim/sessions/".g:session_name.".vim"
+  execute "mks! ".g:vimdir."/sessions/".g:session_name.".vim"
   execute "wa"
   execute "qa!"
 endfunction
