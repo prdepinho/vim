@@ -9,11 +9,10 @@ function! SetColors()
     " Tweaks to the color scheme.
     hi Normal guibg=gray10
     hi TabLine guifg=Black guibg=Grey
-
-    " Cursor and column line.
-    hi CursorLine guibg=gray15
-    hi CursorColumn guibg=gray15
   endif
+  " Cursor and column line.
+  hi CursorLine cterm=none ctermbg=black guibg=gray15
+  hi CursorColumn cterm=none ctermbg=black guibg=gray15
 endfunction
 
 " windows vim
