@@ -9,11 +9,10 @@ function! SetColors()
     " Tweaks to the color scheme.
     hi Normal guibg=gray10
     hi TabLine guifg=Black guibg=Grey
-
-    " Cursor and column line.
-    hi CursorLine guibg=gray15
-    hi CursorColumn guibg=gray15
   endif
+  " Cursor and column line.
+  hi CursorLine cterm=none ctermbg=black guibg=gray15
+  hi CursorColumn cterm=none ctermbg=black guibg=gray15
 endfunction
 
 " windows vim
@@ -97,7 +96,7 @@ augroup indentationgroup
   autocmd Filetype notype set nonu nornu cc=0 nowrap
   autocmd Filetype netrw set nu rnu nowrap
   autocmd Filetype eruby,html,xml set sw=2 ts=2 sts=2 et cc=0 nowrap nu rnu
-  autocmd Filetype sql,vim,ruby,json  set sw=2 ts=2 sts=2 et cc=120 nowrap nu rnu
+  autocmd Filetype sql,vim,ruby,json,lua  set sw=2 ts=2 sts=2 et cc=120 nowrap nu rnu
   autocmd Filetype h,hpp,c,cpp,java,cs set sts=4 sw=4 ts=4 cc=120 noet nowrap nu rnu
   autocmd Filetype python set sts=4 shiftwidth=4 ts=4 cc=120 et nowrap nu rnu
   autocmd Filetype markdown set sts=4 shiftwidth=4 ts=4 cc=120 et nowrap nu rnu
