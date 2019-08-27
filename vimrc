@@ -100,6 +100,7 @@ augroup indentationgroup
   autocmd Filetype eruby,html,xml set sw=2 ts=2 sts=2 et cc=0 nowrap nu rnu
   autocmd Filetype sql,vim,ruby,json,javascript,lua  set sw=2 ts=2 sts=2 et cc=120 nowrap nu rnu
   autocmd Filetype h,hpp,c,cpp,java,cs set sts=4 sw=4 ts=4 cc=120 noet nowrap nu rnu
+  autocmd Filetype lex,yacc set sts=4 sw=4 ts=4 cc=120 noet nowrap nu rnu autoindent
   autocmd Filetype python set sts=4 shiftwidth=4 ts=4 cc=120 et nowrap nu rnu
   autocmd Filetype markdown set sts=4 shiftwidth=4 ts=4 cc=120 et nowrap nu rnu
 augroup end 
