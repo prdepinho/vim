@@ -9,10 +9,12 @@ function! SetColors()
     " Tweaks to the color scheme.
     hi Normal guibg=gray10
     hi TabLine guifg=Black guibg=Grey
+    hi Folded guifg=grey guibg=grey10
   endif
   " Cursor and column line.
   hi CursorLine cterm=none ctermbg=black guibg=gray15
   hi CursorColumn cterm=none ctermbg=black guibg=gray15
+  hi Folded ctermfg=Grey ctermbg=black
 endfunction
 
 " windows vim
@@ -178,6 +180,7 @@ set splitright
 " set number relativenumber
 set mouse=a
 set backspace=indent,eol,start
+set foldtext=getline(v:foldstart).getline(v:foldend)
 
 " vim metadata
 set history=1000
@@ -336,6 +339,14 @@ function! CloseSession(...)
   execute "qa!"
 endfunction
 
+function! Indent()
+  " Indent the whole buffer, breaking lines and all. Useful for beautifying
+  " json files or similar structures.
+  execute '%s/\([{,\[]\)/\1\r/g'
+  execute '%s/\([}\]]\)/\r\1/g'
+  normal gg=G
+endfunction
+
 " Git commands
 com! GiffAll call TabGitDiff()
 com! -nargs=* Giff call TabVimdiff(<f-args>)
@@ -348,3 +359,4 @@ com! -nargs=* CreateWorkspace call CreateWorkspace(<f-args>)
 com! -nargs=* OpenSession call OpenSession(<f-args>)
 com! -nargs=* SaveSession call SaveSession(<f-args>)
 com! -nargs=* CloseSession call CloseSession(<f-args>)
+com! Indent call Indent()
