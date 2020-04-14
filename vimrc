@@ -17,10 +17,11 @@ function! SetColors()
   hi Folded ctermfg=Grey ctermbg=black
 endfunction
 
+call SetColors()
+
 " windows vim
 if has("gui_running")
 
-  call SetColors()
     " set guifont=Consolas:h10
     if has("gui_win32")
       set guifont=Lucida\ Console:h9
