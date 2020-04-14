@@ -98,9 +98,9 @@ augroup indentationgroup
   autocmd Filetype notype set nonu nornu cc=0 nowrap
   autocmd Filetype netrw set nu rnu nowrap
   autocmd Filetype eruby,html,xml set sw=2 ts=2 sts=2 et cc=0 nowrap nu rnu
-  autocmd Filetype sql,vim,ruby,json,javascript,lua  set sw=2 ts=2 sts=2 et cc=120 nowrap nu rnu
+  autocmd Filetype sql,vim,ruby,json,javascript,lua set sw=2 ts=2 sts=2 et cc=120 nowrap nu rnu
+  " autocmd Filetype typescript set syntax=javascript sw=2 ts=2 sts=2 et cc=120 nowrap nu rnu cindent expandtab 
   autocmd Filetype h,hpp,c,cpp,java,cs set sts=4 sw=4 ts=4 cc=120 noet nowrap nu rnu
-  autocmd Filetype lex,yacc set sts=4 sw=4 ts=4 cc=120 noet nowrap nu rnu autoindent
   autocmd Filetype python set sts=4 shiftwidth=4 ts=4 cc=120 et nowrap nu rnu
   autocmd Filetype markdown set sts=4 shiftwidth=4 ts=4 cc=120 et nowrap nu rnu
 augroup end 
@@ -109,14 +109,15 @@ augroup miscgroup
   autocmd!
   autocmd Filetype netrw autocmd BufEnter hi CursorLine gui=underline
   autocmd BufEnter *.vue setfiletype html
+  autocmd BufEnter,BufNewFile *.ts setfiletype javascript
   autocmd BufEnter * if &filetype == "" | setlocal filetype=notype | endif
 augroup end
 
 " Auto close tags, (, [, {, do, function, class, struct... when follod with <RETURN> or <SPACE>
 augroup tagsgroup
   autocmd!
-  autocmd Filetype eruby,html,xml inoremap <buffer> ><RETURN> ><ESC>T<yiwf>a</<ESC>pA><ESC>F<i<RETURN><ESC>O
-  autocmd Filetype eruby,html,xml inoremap <buffer> ><SPACE> ><ESC>T<yiwf>a</<ESC>pA><ESC>F<i
+  autocmd Filetype eruby,html,xml inoremap <buffer> ><RETURN> ><ESC>T<yWf>a</<ESC>pA<BACKSPACE>><ESC>F<i<RETURN><ESC>O
+  autocmd Filetype eruby,html,xml inoremap <buffer> ><SPACE> ><ESC>T<yWf>a</<ESC>pA<BACKSPACE>><ESC>F<i
 augroup end
 
 augroup doendgroup
@@ -348,6 +349,14 @@ function! Indent()
   normal gg=G
 endfunction
 
+function! SideExplorer()
+  " Open a side-bar file explorer. "
+  execute "Lex"
+  normal i
+  normal i
+  execute "vert res 40"
+endfunction
+
 " Git commands
 com! GiffAll call TabGitDiff()
 com! -nargs=* Giff call TabVimdiff(<f-args>)
@@ -361,3 +370,4 @@ com! -nargs=* OpenSession call OpenSession(<f-args>)
 com! -nargs=* SaveSession call SaveSession(<f-args>)
 com! -nargs=* CloseSession call CloseSession(<f-args>)
 com! Indent call Indent()
+com! FileExplorer call SideExplorer()
