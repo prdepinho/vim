@@ -345,7 +345,13 @@ endfunction
 function! Indent()
   " Indent the whole buffer, breaking lines and all. Useful for beautifying
   " json files or similar structures.
-  execute '%s/\([{,\[]\)/\1\r/g'
+  execute '%s/\([{\[]\)/\1\r/g'
+  execute '%s/\(",\)/\1\r/g'
+  execute '%s/\(\d,\)/\1\r/g'
+  execute '%s/\(true,\)/\1\r/g'
+  execute '%s/\(false,\)/\1\r/g'
+  execute '%s/\(null,\)/\1\r/g'
+  execute '%s/\([\]}],\)/\1\r/g'
   execute '%s/\([}\]]\)/\r\1/g'
   normal gg=G
 endfunction
