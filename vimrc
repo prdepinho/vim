@@ -37,11 +37,13 @@ if has("gui_running")
 
   " Remap meta keys to work in the terminal, instead of printing weird
   " characters.
-  tnoremap <M-b> <ESC>b
-  tnoremap <M-f> <ESC>f
-  tnoremap <M-d> <ESC>d
-  tnoremap <M-BS> <ESC><BS>
-  tnoremap <S-Insert> <C-w>"+
+  if has("gui_win32")
+    tnoremap <M-b> <ESC>b
+    tnoremap <M-f> <ESC>f
+    tnoremap <M-d> <ESC>d
+    tnoremap <M-BS> <ESC><BS>
+    tnoremap <S-Insert> <C-w>"+
+  endif
 
   if has("gui_win32")
     " This changes the default shell for Git Bash, instead of Windows CMD. 
@@ -150,6 +152,7 @@ noremap <F1> :copen<cr>
 noremap <F2> :cclose<cr>
 noremap <F3> :cn<cr>
 noremap <F4> :cp<cr>
+noremap <C-[> <ESC>yiw:vimgrep <C-r>" **/*.* <CR>
 
 " In GitBash has("Win32") returns false;
 " this returns true on Windows even when in GitBash.
@@ -180,6 +183,7 @@ set statusline=%<%f%h%m%r%=%b\ 0x%B\ \ %l,%c%V\ %P
 set showcmd
 set splitbelow
 set splitright
+set cscopetag
 " set number relativenumber
 set mouse=a
 set backspace=indent,eol,start

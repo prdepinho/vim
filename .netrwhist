@@ -1,0 +1,12 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhistcnt =7
+let g:netrw_dirhist_7='/home/paulo/seventh/tradutor-service/s2p'
+let g:netrw_dirhist_6='/home/paulo/seventh/tradutor-service/s2p/data/mock'
+let g:netrw_dirhist_5='/home/paulo/seventh/tradutor-service/s2p/data'
+let g:netrw_dirhist_4='/home/paulo/seventh/tradutor-service/s2p/log'
+let g:netrw_dirhist_3='/home/paulo/seventh/tradutor-service/s2p/service'
+let g:netrw_dirhist_2='/home/paulo/seventh/tradutor-service/s2p/updater'
+let g:netrw_dirhist_1='/home/paulo/seventh/tradutor-service/s2p/model/situator'
+let g:netrw_dirhist_0='/home/paulo/seventh/tradutor-service/s2p/model'
+let g:netrw_dirhist_9='/home/paulo/seventh/tradutor-service/s2p'
+let g:netrw_dirhist_8='/home/paulo/seventh/tradutor-service/s2p/log'
