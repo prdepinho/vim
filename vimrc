@@ -79,6 +79,7 @@ endif
 if $OS == "Windows_NT"
   if exists("g:loaded_ale")
     let g:ale_linters = { 'cpp' : ['clang'] }
+    let g:ale_python_flake8_options = '--max-line-length=120'
   endif
 endif
 
