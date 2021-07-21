@@ -153,7 +153,7 @@ noremap <F1> :copen<cr>
 noremap <F2> :cclose<cr>
 noremap <F3> :cn<cr>
 noremap <F4> :cp<cr>
-noremap <C-\> yiw:vimgrep <C-r>" **/*.* <CR>
+noremap <C-\> yiw:vimgrep <C-r>" **/*.py <CR>
 
 " In GitBash has("Win32") returns false;
 " this returns true on Windows even when in GitBash.
