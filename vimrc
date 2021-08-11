@@ -147,7 +147,7 @@ noremap <c-n> gt
 noremap <c-p> gT
 noremap <C-TAB> gt
 noremap <C-S-TAB> gT
-if has("gui_running")
+if has("tnoremap")
   tnoremap <C-TAB> <C-w>:normal gt<CR>
   tnoremap <C-S-TAB> <C-w>:normal gT<CR>
 endif
