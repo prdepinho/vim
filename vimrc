@@ -147,8 +147,10 @@ noremap <c-n> gt
 noremap <c-p> gT
 noremap <C-TAB> gt
 noremap <C-S-TAB> gT
-tnoremap <C-TAB> <C-w>:normal gt<CR>
-tnoremap <C-S-TAB> <C-w>:normal gT<CR>
+if has("gui_running")
+  tnoremap <C-TAB> <C-w>:normal gt<CR>
+  tnoremap <C-S-TAB> <C-w>:normal gT<CR>
+endif
 noremap <F1> :copen<cr>
 noremap <F2> :cclose<cr>
 noremap <F3> :cn<cr>
