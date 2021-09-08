@@ -130,8 +130,8 @@ augroup doendgroup
   autocmd Filetype lua inoremap then<RETURN> thenend<ESC>Fei<RETURN><ESC>O
   autocmd Filetype lua inoremap function<SPACE> functionend<ESC>Fei<RETURN><ESC>kA<SPACE>
 
-  autocmd Filetype h,hpp,c,cpp inoremap class<SPACE> class{};<ESC>F}i<RETURN><ESC>kf{i<SPACE>
-  autocmd Filetype h,hpp,c,cpp inoremap struct<SPACE> struct{};<ESC>F}i<RETURN><ESC>kf{i<SPACE>
+  " autocmd Filetype h,hpp,c,cpp inoremap class<SPACE> class{};<ESC>F}i<RETURN><ESC>kf{i<SPACE>
+  " autocmd Filetype h,hpp,c,cpp inoremap struct<SPACE> struct{};<ESC>F}i<RETURN><ESC>kf{i<SPACE>
 augroup end
 
 inoremap (<RETURN> ()<ESC>i<RETURN><ESC>O
@@ -309,7 +309,9 @@ function! OpenSession(...)
   endif
   execute "source ".g:vimdir."/sessions/".g:session_name.".vim"
   call SetColors()
-  simalt ~x
+  if has("gui_win32")
+    simalt ~x
+  endif
 endfunction
 
 function! SaveSession(...)
